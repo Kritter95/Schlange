@@ -1,0 +1,74 @@
+#Anzeige{
+    height: 5vh;
+    width: 100%;
+    background-color: rgba(50,50,50);
+    color: orange;
+    font-size: 20px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    
+    border: 2px solid rgb(230, 150, 0);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    align-items: center;
+    margin: 0;
+}
+.Spalte{
+    flex: 33.33%;
+}
+
+/*Menü.hmtl*/
+
+#Menü{
+    background-color: rgb(50,50,50);
+    height: 525px;
+    width: 480px;
+    border: 3px solid orange;
+    box-sizing: border-box;
+}
+#Titel{
+    font-family: "Playwrite DK Loopet", cursive;
+    font-size: 50px;
+    color: orange;
+    display: flex;
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    padding-top: 60px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+#Spieloptionen{
+    font-size: 18px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: orange;
+    display: flex;
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0px;
+    margin-top: 0px;
+    padding-bottom: 10px;
+}
+#RekordM{
+    font-size: 40px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: orange;
+    display: flex;
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2px;
+}
+#Start{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    display: flex;
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}

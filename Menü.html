@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Menü</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DK+Loopet:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <ui:include src="krasses game.html" />
+
+</head>
+<body>
+
+    <table id="Menü">
+        <tr><td id="Titel">Schlange!</td></tr>
+        <tr><td id="Spieloptionen">
+            <input 
+                type="button" 
+                value="Optionen" 
+                onclick="window.location.href='Optionen.html';"
+                style="width:100px; 
+                       height:35px;
+                       font-size: 14px;
+                       font-weight: bold;
+                       color: orange;
+                       border: 2px solid orange;
+                       border-radius: 20px;
+                       background-color: rgb(70,70,70);" 
+            />  
+        </td></tr>
+
+        <tr><td id="Start">
+            <input 
+                type="button" 
+                value="Start" 
+                onclick="window.location.href='krasses game.html';"
+                style="width:100px; 
+                       height:50px;
+                       font-size: 18px;
+                       font-weight: bold;
+                       color: orange;
+                       border: 2px solid orange;
+                       border-radius: 20px;
+                       background-color: rgb(70,70,70);" 
+            />         
+        </td></tr>
+
+        <tr><td id="RekordM"></td></tr>
+    </table>
+
+
+    <script>
+        // Rekord aus dem localStorage abrufen und im Menü unter "RekordM" anzeigen
+        let gespeicherterRekord = localStorage.getItem("Rekord") || 0;
+        document.getElementById("RekordM").innerHTML = "Rekord: " + gespeicherterRekord;
+    </script>
+    
+</body>
+</html>

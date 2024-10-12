@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Schlange</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css"> <!--lädt das style.css-->
+    <ui:include src="Menü.html" /> <!--importiert das Menü-->
+    
+</head>
+<body>
+    
+<canvas id="canvas" width="480" height="480" style="border:2px solid rgb(230, 150, 0);"></canvas>
+<div id="Anzeige">
+    <div id="Anzahl" class="Spalte"></div>
+    <div id="Rekord" class="Spalte"></div>
+    <div id="Menüknopf" class="Spalte">
+        <input 
+            type="button" 
+            value="Menü" 
+            onclick="window.location.href='Menü.html';"
+            style="width:70px; 
+                   height:27px;
+                   font-weight: bold;
+                   color: orange;
+                   border: 2px solid orange;
+                   border-radius: 20px;
+                   background-color: rgb(70,70,70);" 
+        />
+    </div>
+</div>
+
+<script>
+let anzeige = document.getElementById("Anzeige");//macht Anzeige zur Variable für script
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+let Zeile = 20;
+let Spalte = 20;
+let Schlangencorpus = [{x:18, y:10},];
+let Schlange = [{x:18, y:10},];
+let Orange = {x:5, y:10};
+let Zellenbreite = canvas.width / Zeile;
+let Zellenhöhe = canvas.height / Spalte;
+let Richtung = "LINKS";
+let Gegessen = false;
+let Eingabesperre = false;
+let AnzahlGegessen = 0;
+let gespeicherterRekord = localStorage.getItem("Rekord") || 0;//lädt den Rekord aus dem Speicher
+
+
+//document. sucht außerhalb des Elements im gesamten Dokument nach Informationen
+setInterval(gameLoop, 200); //führt die Funktion in Milisekunden aus
+document.addEventListener("keydown", Steuerung);
+window.addEventListener("resize", DivWeite);//rezized den div beim Fenster ziehen
+document.getElementById("Anzahl").innerHTML =
+"Punkte: " + AnzahlGegessen;//gibt die Anzahl an den div weiter
+document.getElementById("Rekord").innerHTML =
+"Rekord: " + gespeicherterRekord;
+
+DivWeite();
+draw();
+
+
+function DivWeite(){anzeige.style.width = canvas.width + 4 + "px";}
+
+function draw(){
+    //Hintergrund
+    ctx.fillStyle = "rgb(50,50,50)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    //Schlangencorpus
+    ctx.fillStyle = "rgba(255,165,0,0.7)";
+    Schlangencorpus.forEach(TeilC => addcorp(TeilC.x, TeilC.y));
+
+    //Schlange
+    ctx.fillStyle = "white";
+    Schlange.forEach(Teil => add(Teil.x, Teil.y));
+
+    //Orange
+    ctx.fillStyle = "rgba(255,165,0,1)";
+    add(Orange.x,Orange.y);
+}
+
+function addcorp(x, y){
+    ctx.fillRect(x*Zellenbreite, y*Zellenhöhe, Zellenbreite, Zellenhöhe);
+}
+
+function add(x, y){
+    ctx.fillRect(x*Zellenbreite, y*Zellenhöhe, Zellenbreite - 1, Zellenhöhe - 1);
+}
+
+function Steuerung(e){ //Switch ist effektiver
+    if(Eingabesperre) return;
+
+    if(e.keyCode == 87 && Richtung !== "RUNTER")
+    {Richtung = "HOCH"; Eingabesperre = true}; //W
+    
+    if(e.keyCode == 65 && Richtung !== "RECHTS")
+    {Richtung = "LINKS"; Eingabesperre = true}; //A
+    
+    if(e.keyCode == 83 && Richtung !== "HOCH")
+    {Richtung = "RUNTER"; Eingabesperre = true}; //S
+    
+    if(e.keyCode == 68 && Richtung !== "LINKS")
+    {Richtung = "RECHTS"; Eingabesperre = true}; //D
+}
+
+function Wachsen(){
+    for (let i = Schlange.length -1; i>0; i--) {
+        const Teil = Schlange[i];
+        const Spitze = Schlange[i-1];
+        Teil.x = Spitze.x;
+        Teil.y = Spitze.y;
+    }
+}
+
+function WachsenCorp(){
+    for (let o = Schlangencorpus.length -1; o>0; o--) {
+        const TeilC = Schlangencorpus[o];
+        const Kopf = Schlangencorpus[o-1];
+        TeilC.x = Kopf.x;
+        TeilC.y = Kopf.y;
+    }
+}
+
+function Fallobst() { 
+    let ZufallX;
+    let ZufallY;
+    let AufSchlange;
+
+    // Wiederhole die Platzierung der Orange, bis sie nicht auf der Schlange ist
+    do {
+        ZufallX = Math.floor(Math.random() * Spalte);
+        ZufallY = Math.floor(Math.random() * Zeile);
+
+        // Überprüfen, ob die Zufallsposition auf einem Schlangenteil liegt
+        AufSchlange = Schlange.find(Teil => Teil.x === ZufallX
+                                         && Teil.y === ZufallY);
+    } 
+    while (AufSchlange);// Falls die Orange auf der Schlange liegt, wiederhole die Schleife
+
+    Orange = {x: ZufallX, y: ZufallY};// Orange an der neuen Position platzieren
+}
+
+function GameOver(){
+
+    let ErstesTeil = Schlange[0];
+    let AnderesTeil = Schlange.slice(1);
+    let DoppeltesTeil = AnderesTeil.find(Teil => Teil.x == ErstesTeil.x 
+                                              && Teil.y == ErstesTeil.y);
+
+    if (Schlange[0].x < 0 ||
+        Schlange[0].x > Zeile -1 ||
+        Schlange[0].y < 0 ||
+        Schlange[0].y > Spalte -1 ||
+        DoppeltesTeil)
+        
+        {
+        Schlangencorpus = [{x:18, y:10},];
+        Schlange = [{x:18, y:10},];
+        Orange = {x:5, y:10};
+        Richtung = "LINKS";
+        Gegessen = false;
+        AnzahlGegessen = 0;
+
+        document.getElementById("Anzahl").innerHTML =
+            "Punkte: " + AnzahlGegessen;
+    }
+}
+
+function gameLoop(){ //alles in dieser Funktion wird alle 200ms aktualisiert/ausgeführt
+
+    GameOver();
+
+    if (Gegessen){
+        Schlange = [{x: Schlange[0].x, 
+                     y: Schlange[0].y}, ...Schlange];
+
+        Schlangencorpus = [{x: Schlangencorpus[0].x,
+                            y: Schlangencorpus[0].y}, ...Schlangencorpus];
+
+        Gegessen = false;
+        AnzahlGegessen++;
+
+        document.getElementById("Anzahl").innerHTML =
+            "Punkte: " + AnzahlGegessen;
+
+        let Rekord = localStorage.getItem("Rekord") || 0;
+        if (AnzahlGegessen > Rekord) {
+            localStorage.setItem("Rekord", AnzahlGegessen);
+            document.getElementById("Rekord").innerHTML = "Rekord: " + AnzahlGegessen;
+            //localStorage speichert im browser --> daher global abrufbar
+        }
+    }
+
+    
+    WachsenCorp();
+    Wachsen();
+
+    if (Richtung == "LINKS") {
+        Schlangencorpus[0].x--;
+        Schlange[0].x--;
+    }
+    
+    if (Richtung == "RECHTS") {
+        Schlangencorpus[0].x++;
+        Schlange[0].x++;
+    }
+
+    if (Richtung == "HOCH") {
+        Schlangencorpus[0].y--;
+        Schlange[0].y--;
+    }
+
+    if (Richtung == "RUNTER") {
+        Schlangencorpus[0].y++;
+        Schlange[0].y++;
+    }
+
+    //Kontrolle ob Schlange auf der Orange ist und Neuplatzierung falls ja
+    if (Schlange[0].x == Orange.x
+     && Schlange[0].y == Orange.y){
+        Gegessen = true;
+        Fallobst();
+    }
+
+    Eingabesperre = false;
+    draw(); //damit nach einem Tastendruck die Aktualisierung schneller erfolgt
+}
+
+</script>
+</body>
+</html>
